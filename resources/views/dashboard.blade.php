@@ -1,7 +1,21 @@
 @extends('layouts.user_type.auth')
 
 @section('content')
-
+@if (session('success'))
+<div class="alert alert-success text-white" role="alert">
+    <strong>Success!</strong> {{ session('success') }}
+</div>
+@endif
+@if (session('error') || $errors->any())
+<div class="alert alert-danger text-white" role="alert">
+    <strong class="mb-2">Error!</strong>
+    <ul class="mt-2">
+        @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
   <div class="row">
     <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
       <div class="card">

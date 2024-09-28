@@ -3,13 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-use App\Http\Services\UserService;
 use App\Models\Product;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Services\ProductService;
 
 class ProductController extends Controller
 {
@@ -28,76 +26,70 @@ class ProductController extends Controller
         }
 
         $products = $products->get();
-
         return view('products.index', compact('products'));
     }
 
     public function create()
     {
-        return view('products.create');
+        $vendors = User::role('VENDOR')->get();
+
+        return view('products.create', compact('vendors'));
     }
 
     public function store(Request $request)
     {   
         $validatedData = $request->validate([
             'name' => ['required', 'max:50'],
-            'email' => ['required', 'email', 'max:50', Rule::unique('users', 'email')],
-            'password' => ['required', 'min:5', 'max:20'],
-            'role' => ['nullable', 'in:ADMIN,STAFF,VENDOR']
+            'vendor_id' => ['required', 'exists:users,id'],
+            'description' => ['max:255'],
+            'price' => ['required', 'numeric'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
         ]);
 
         DB::beginTransaction();
         try {
-            $createdUser = UserService::create($validatedData);
+            $createdProduct = ProductService::create($request);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withErrors(['errors' => $e->getMessage()]);
         }
 
-        if($createdUser['error']) {
-            return back()->withErrors(['errors' => $createdUser['message']]);
+        if($createdProduct['error']) {
+            return back()->withErrors(['errors' => $createdProduct['message']]);
         }
 
-        return redirect('/products')->with(['success' => 'User has been created.']);
+        return redirect('/products')->with(['success' => 'Product has been created.']);
     }
 
     public function edit($id)
     {
-        $user = User::findOrFail($id);
-        return view('products.edit', compact('user'));
+        $product = Product::findOrFail($id);
+        return view('products.edit', compact('product'));
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
-            'password' => 'nullable|string|min:6|confirmed',
-            'role' => 'required|string|in:ADMIN,STAFF,VENDOR',
+            'name' => ['required', 'max:50'],
+            'vendor_id' => ['required', 'exists:users,id'],
+            'description' => ['max:255'],
+            'price' => ['required', 'numeric'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
         ]);
 
-        $user = User::findOrFail($id); 
-
-        $user->name = $request->input('name');
-        $user->email = $request->input('email');
-        // remove role by name
-        $user->removeRole($user->roles->first()->name);
-        $user->assignRole($request->input('role'));
-
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->input('password'));
+        $product = ProductService::update($request, $id);
+        if($product['error']) {
+            return back()->withErrors(['errors' => $product['message']]);
         }
 
-        $user->save();
-
-        return redirect('/products')->with('success', 'User updated successfully!');
+        return redirect('/products')->with('success', 'Product updated successfully!');
     }
 
     public function destroy(Request $request, $id)
     {
-        $user = User::find($id);
-        $user->delete();
-        return redirect('/products')->with(['success' => 'User has been deleted.']);
+        $product = Product::find($id);
+        $product->delete();
+        return redirect('/products')->with(['success' => 'Product has been deleted.']);
     }
 }

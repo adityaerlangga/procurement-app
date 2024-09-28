@@ -12,7 +12,7 @@
                     @endif
                     @if (session('error') || $errors->any())
                         <div class="alert alert-danger text-white" role="alert">
-                            <strong class="mb-2">Error! Something went wrong...</strong>
+                            <strong class="mb-2">Error!</strong>
                             <ul class="mt-2">
                                 @foreach ($errors->all() as $error)
                                     <li>{{ $error }}</li>

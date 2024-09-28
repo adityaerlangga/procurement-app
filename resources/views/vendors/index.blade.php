@@ -74,7 +74,7 @@
                                             </td>
                                             <td>
                                                 <div>
-                                                    <img src="{{ asset('/assets/img/team-2.jpg') }}"
+                                                    <img src="https://is3.cloudhost.id/vhiweb/vhiweb/uploads/default.jpeg"
                                                         class="avatar avatar-sm me-3">
                                                 </div>
                                             </td>
@@ -112,10 +112,25 @@
                                                                 data-id="{{ $user->vendor->id }}"></i>
                                                         </form>
                                                     </span>
+                                                @elseif ($user->vendor->status == 'REJECTED')
+                                                    <span
+                                                        class="{{ $user->vendor->status == 'APPROVED' ? 'text-primary' : 'text-danger' }}">{{ $user->vendor->status }}
+                                                    </span>
+                                                    <span class="mx-2">
+                                                        <form action="/vendors/{{ $user->vendor->id }}/approve"
+                                                            method="POST"
+                                                            class="d-inline form-approve-user-{{ $user->vendor->id }}">
+                                                            @csrf
+                                                            <i class="cursor-pointer fas fa-check text-secondary btn-approve-user"
+                                                                data-id="{{ $user->vendor->id }}"></i>
+                                                        </form>
+                                                    </span>
                                                 @else
-                                                <span class="{{ $user->vendor->status == 'APPROVED' ? 'text-primary' : 'text-danger' }}">{{ $user->vendor->status }}</span>
+                                                    <span
+                                                        class="{{ $user->vendor->status == 'APPROVED' ? 'text-primary' : 'text-danger' }}">{{ $user->vendor->status }}
+                                                    </span>
                                                 @endif
-                                                    
+
                                             </td>
                                         </tr>
                                     @endforeach
@@ -143,7 +158,8 @@
                 "responsive": true
             });
 
-            $('.btn-approve-user').click(function() {
+            // Delegate the click event to dynamically created elements
+            $(document).on('click', '.btn-approve-user', function() {
                 let id = $(this).data('id');
                 Swal.fire({
                     title: 'Are you sure?',
@@ -160,7 +176,7 @@
                 });
             });
 
-            $('.btn-reject-user').click(function() {
+            $(document).on('click', '.btn-reject-user', function() {
                 let id = $(this).data('id');
                 Swal.fire({
                     title: 'Are you sure?',
@@ -176,6 +192,7 @@
                     }
                 });
             });
+
         });
     </script>
 @endsection

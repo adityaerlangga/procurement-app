@@ -38,8 +38,7 @@ class UserController extends Controller
         }
 
         if($createdUser['error'] == false) {
-            Auth::login($createdUser['data']['user']); 
-            return redirect('/dashboard')->with(['success' => 'Your account has been created.']);
+            return redirect('/')->with(['success' => 'Your vendor account has been created, waiting for approval from admin.']);
         }
 
         return back()->withErrors(['errors' => $createdUser['message']]);
@@ -47,6 +46,9 @@ class UserController extends Controller
 
     public function login()
     {
+        if(Auth::check()) {
+            return redirect('/dashboard');
+        }
         return view('session.login');
     }
 
@@ -56,24 +58,34 @@ class UserController extends Controller
             'email'=>'required|email',
             'password'=>'required' 
         ]);
-
         if(Auth::attempt($validatedData)) {
-            if(Auth::user()->hasRole('VENDOR') && Auth::user()->vendor->status == 'PENDING') {
-                return back()->with('error', 'Your account is still pending approval.');
-            } else if (Auth::user()->hasRole('VENDOR') && Auth::user()->vendor->status == 'REJECTED') {
-                return back()->with('error', 'Your account has been rejected.');
+            if(Auth::user()->hasRole('VENDOR')) {
+                $user = Auth::user();
+                $vendorStatus = $user->vendor->status;
+                if($vendorStatus == 'PENDING') {
+                    Auth::logout();
+                    return back()->with('error', 'Your account is still pending approval.');
+                }
+                if($vendorStatus == 'REJECTED') {
+                    Auth::logout();
+                    return back()->with('error', 'Your account has been rejected.');
+                }
             }
+            
 
             session()->regenerate();
             return redirect('dashboard')->with(['success'=>'You are logged in.']);
         } else{
-            return back()->withErrors(['email'=>'Email or password invalid.']);
+            Auth::logout();
+            return back()->with('error', 'Invalid credentials.');
         }
     }
     
     public function logout()
     {
         Auth::logout();
+        session()->invalidate();
+        session()->regenerateToken();
         return redirect('/login')->with(['success'=>'You\'ve been logged out.']);
     }
 

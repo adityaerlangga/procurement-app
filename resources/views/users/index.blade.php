@@ -23,29 +23,44 @@
                             <div>
                                 <h5 class="mb-0">All Users</h5>
                             </div>
-                    
+
                             <!-- Search Form and New User Button -->
                             <div class="d-flex align-items-center">
                                 <!-- New User Button -->
-                                <a href="/users/create" class="btn btn-success ms-3 d-flex align-items-center justify-content-center" style="height: 42px;">
+                                <a href="/users/create"
+                                    class="btn btn-success ms-3 d-flex align-items-center justify-content-center"
+                                    style="height: 42px;">
                                     <i class="fas fa-plus me-1"></i> New User
                                 </a>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="card-body px-0 pt-0 pb-2">
                         <div class="table-responsive px-5 py-2">
                             <table id="users-table" class="table align-items-center mb-0">
                                 <thead>
                                     <tr>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ID</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Photo</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Email</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Role</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Creation Date</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ID
+                                        </th>
+                                        <th
+                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                            Photo</th>
+                                        <th
+                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Name</th>
+                                        <th
+                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Email</th>
+                                        <th
+                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Role</th>
+                                        <th
+                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Creation Date</th>
+                                        <th
+                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -59,7 +74,8 @@
                                             </td>
                                             <td>
                                                 <div>
-                                                    <img src="{{ asset('/assets/img/team-2.jpg') }}" class="avatar avatar-sm me-3">
+                                                    <img src="https://is3.cloudhost.id/vhiweb/vhiweb/uploads/default.jpeg"
+                                                        class="avatar avatar-sm me-3">
                                                 </div>
                                             </td>
                                             <td class="text-center">
@@ -69,20 +85,25 @@
                                                 <p class="text-xs font-weight-bold mb-0">{{ $user?->email }}</p>
                                             </td>
                                             <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0">{{ $user->getRoleNames()->first() }}</p>
+                                                <p class="text-xs font-weight-bold mb-0">
+                                                    {{ $user->getRoleNames()->first() }}</p>
                                             </td>
                                             <td class="text-center">
-                                                <span class="text-secondary text-xs font-weight-bold">{{ $user->created_at }}</span>
+                                                <span
+                                                    class="text-secondary text-xs font-weight-bold">{{ $user->created_at }}</span>
                                             </td>
                                             <td class="text-center">
-                                                <a href="/users/{{ $user->id }}/edit" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit user">
+                                                <a href="/users/{{ $user->id }}/edit" class="mx-3"
+                                                    data-bs-toggle="tooltip" data-bs-original-title="Edit user">
                                                     <i class="fas fa-user-edit text-secondary"></i>
                                                 </a>
                                                 <span>
-                                                    <form action="/users/{{ $user->id }}" method="POST" class="d-inline form-delete-user-{{ $user->id }}">
+                                                    <form action="/users/{{ $user->id }}" method="POST"
+                                                        class="d-inline form-delete-user-{{ $user->id }}">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <i class="cursor-pointer fas fa-trash text-secondary btn-delete-user" data-id="{{ $user->id }}"></i>
+                                                        <i class="cursor-pointer fas fa-trash text-secondary btn-delete-user"
+                                                            data-id="{{ $user->id }}"></i>
                                                     </form>
                                                 </span>
                                             </td>
@@ -92,7 +113,7 @@
                             </table>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
         </div>
@@ -114,8 +135,8 @@
                 "responsive": true
             });
 
-            // Handle delete button click with SweetAlert
-            $('.btn-delete-user').click(function() {
+            // Delegate the click event to dynamically created elements
+            $(document).on('click', '.btn-delete-user', function() {
                 let id = $(this).data('id');
                 Swal.fire({
                     title: 'Are you sure?',
@@ -131,6 +152,7 @@
                     }
                 });
             });
+
         });
     </script>
 @endsection

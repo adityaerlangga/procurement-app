@@ -12,7 +12,7 @@
                     @endif
                     @if (session('error') || $errors->any())
                         <div class="alert alert-danger text-white" role="alert">
-                            <strong class="mb-2">Error! Something went wrong...</strong>
+                            <strong class="mb-2">Error!</strong>
                             <ul class="mt-2">
                                 @foreach ($errors->all() as $error)
                                     <li>{{ $error }}</li>
@@ -25,57 +25,71 @@
                     <div class="card-header pb-0">
                         <div class="d-flex flex-row justify-content-between">
                             <div>
-                                <h5 class="mb-0">Edit User</h5>
+                                <h5 class="mb-0">Edit Product</h5>
                             </div>
                         </div>
                     </div>
                     <div class="card-body px-0 pt-0 pb-2">
-                        <form action="/users/{{ $user->id }}/edit" method="POST" class="px-4">
+                        <form action="/products/{{ $product->id }}/edit" method="POST" enctype="multipart/form-data" class="px-4">
                             @csrf
                             @method('PUT')
+                            
                             <div class="form-group">
                                 <label for="name">Name</label>
-                                <input type="text" name="name" id="name" class="form-control" placeholder="Enter user name" value="{{ old('name', $user->name) }}">
+                                <input type="text" name="name" id="name" class="form-control" placeholder="Enter product name" value="{{ old('name', $product->name) }}">
                                 @error('name')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
 
+                            @if (Auth::user()->hasRole('ADMIN'))
                             <div class="form-group mt-3">
-                                <label for="email">Email</label>
-                                <input type="email" name="email" id="email" class="form-control" placeholder="Enter user email" value="{{ old('email', $user->email) }}">
-                                @error('email')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="form-group mt-3">
-                                <label for="password">Password <small>(leave blank if you don't want to change it)</small></label>
-                                <input type="password" name="password" id="password" class="form-control" placeholder="Enter password (optional)">
-                                @error('password')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="form-group mt-3">
-                                <label for="password_confirmation">Confirm Password</label>
-                                <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" placeholder="Confirm password (optional)">
-                            </div>
-
-                            <div class="form-group mt-3">
-                                <label for="role">Role</label>
-                                <select name="role" id="role" class="form-control">
-                                    <option value="ADMIN" {{ $user->role === 'ADMIN' ? 'selected' : '' }}>Admin</option>
-                                    <option value="STAFF" {{ $user->role === 'STAFF' ? 'selected' : '' }}>Staff Procurement</option>
-                                    <option value="VENDOR" {{ $user->role === 'VENDOR' ? 'selected' : '' }}>Vendor</option>
+                                <label for="role">Vendor</label>
+                                <select name="vendor_id" id="vendor_id" class="form-control">
+                                    @foreach ($vendors as $vendor)
+                                        <option value="{{ $vendor->id }}" {{ $vendor->id == $product->vendor_id ? 'selected' : '' }}>{{ $vendor->name }}</option>
+                                    @endforeach
                                 </select>
-                                @error('role')
+                                @error('vendor_id')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            @endif
+                            @if (Auth::user()->hasRole('VENDOR'))
+                            <input type="hidden" name="vendor_id" value="{{ Auth::user()->vendor->id }}">
+                            @endif
+
+                            <div class="form-group mt-3">
+                                <label for="description">Description</label>
+                                <textarea name="description" id="description" class="form-control" rows="4" placeholder="Enter product description">{{ old('description', $product->description) }}</textarea>
+                                @error('description')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="form-group mt-3">
+                                <label for="price">Price</label>
+                                <input type="number" name="price" id="price" class="form-control" placeholder="Enter product price" value="{{ old('price', $product->price) }}" step="0.01">
+                                @error('price')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="form-group mt-3">
+                                <label for="image">Product Image</label>
+                                <input type="file" name="image" id="image" class="form-control">
+                                @if ($product->image)
+                                <div class="mt-4">
+                                    <a href="{{ $product->image_url }}" target="_blank" class="text-primary">{{ $product->image_url }}</a>
+                                </div>
+                                @endif
+                                @error('image')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="d-flex justify-content-end mt-4">
-                                <button type="submit" class="btn bg-gradient-primary">Update User</button>
+                                <button type="submit" class="btn bg-gradient-primary">Update Product</button>
                             </div>
                         </form>
                     </div>

@@ -23,29 +23,41 @@
                             <div>
                                 <h5 class="mb-0">All Products</h5>
                             </div>
-                    
+
                             <!-- Search Form and New Product Button -->
                             <div class="d-flex align-items-center">
                                 <!-- New Product Button -->
-                                <a href="/products  /create" class="btn btn-success ms-3 d-flex align-items-center justify-content-center" style="height: 42px;">
+                                <a href="/products/create"
+                                    class="btn btn-success ms-3 d-flex align-items-center justify-content-center"
+                                    style="height: 42px;">
                                     <i class="fas fa-plus me-1"></i> New Product
                                 </a>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="card-body px-0 pt-0 pb-2">
                         <div class="table-responsive px-5 py-2">
                             <table id="products-table" class="table align-items-center mb-0">
                                 <thead>
                                     <tr>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ID</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Photo</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Email</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Role</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Creation Date</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ID
+                                        </th>
+                                        <th
+                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                            Photo</th>
+                                        <th
+                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Name</th>
+                                        <th
+                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Description</th>
+                                        <th
+                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Price</th>
+                                        <th
+                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -59,30 +71,31 @@
                                             </td>
                                             <td>
                                                 <div>
-                                                    <img src="{{ asset('/assets/img/team-2.jpg') }}" class="avatar avatar-sm me-3">
+                                                    <img src="{{ $product->image_url }}" class="avatar avatar-sm me-3">
                                                 </div>
                                             </td>
                                             <td class="text-center">
                                                 <p class="text-xs font-weight-bold mb-0">{{ $product?->name }}</p>
                                             </td>
                                             <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0">{{ $product?->email }}</p>
+                                                <p class="text-xs font-weight-bold mb-0">{{ $product?->description }}</p>
                                             </td>
                                             <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0">{{ $product->getRoleNames()->first() }}</p>
+                                                <p class="text-xs font-weight-bold mb-0">{{ $product?->price_formatted }}
+                                                </p>
                                             </td>
                                             <td class="text-center">
-                                                <span class="text-secondary text-xs font-weight-bold">{{ $product->created_at }}</span>
-                                            </td>
-                                            <td class="text-center">
-                                                <a href="/products  /{{ $product->id }}/edit" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit product">
-                                                    <i class="fas fa-product-edit text-secondary"></i>
+                                                <a href="/products/{{ $product->id }}/edit" class="mx-3"
+                                                    data-bs-toggle="tooltip" data-bs-original-title="Edit product">
+                                                    <i class="fas fa-edit text-secondary"></i>
                                                 </a>
                                                 <span>
-                                                    <form action="/products /{{ $product->id }}" method="POST" class="d-inline form-delete-product-{{ $product->id }}">
+                                                    <form action="/products/{{ $product?->id }}" method="POST"
+                                                        class="d-inline form-delete-product-{{ $product?->id }}">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <i class="cursor-pointer fas fa-trash text-secondary btn-delete-product" data-id="{{ $product->id }}"></i>
+                                                        <i class="cursor-pointer fas fa-trash text-secondary btn-delete-product"
+                                                            data-id="{{ $product?->id }}"></i>
                                                     </form>
                                                 </span>
                                             </td>
@@ -92,7 +105,7 @@
                             </table>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
         </div>
@@ -103,7 +116,6 @@
     <script>
         $(document).ready(function() {
             console.log('ready');
-            // Initialize DataTable
             $('#products-table').DataTable({
                 "paging": true,
                 "lengthChange": true,
@@ -114,8 +126,7 @@
                 "responsive": true
             });
 
-            // Handle delete button click with SweetAlert
-            $('.btn-delete-product').click(function() {
+            $(document).on('click', '.btn-delete-product', function() {
                 let id = $(this).data('id');
                 Swal.fire({
                     title: 'Are you sure?',
@@ -131,6 +142,7 @@
                     }
                 });
             });
+
         });
     </script>
 @endsection

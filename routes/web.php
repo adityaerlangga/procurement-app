@@ -10,6 +10,7 @@ use App\Http\Controllers\InfoUserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ChangePasswordController;
 use App\Http\Controllers\ProductController;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,8 +24,13 @@ use App\Http\Controllers\ProductController;
 */
 
 
+Route::get('/', [UserController::class, 'login'])->name('login');
+Route::get('/login', [UserController::class, 'login'])->name('login');
+Route::post('/login', [UserController::class, 'signing']);
+Route::get('/register', [UserController::class, 'register']);
+Route::post('/register', [UserController::class, 'registering']);
+
 Route::group(['middleware' => 'auth'], function () {
-	Route::get('/login', [UserController::class, 'login']);
 	Route::get('/logout', [UserController::class, 'logout']);
 	Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 	
@@ -51,22 +57,6 @@ Route::group(['middleware' => 'auth'], function () {
 		Route::put('/{id}/edit', [ProductController::class, 'update']);
 		Route::delete('/{id}', [ProductController::class, 'destroy']);
 	});
-
-	// Route::get('/user-profile', [InfoUserController::class, 'create']);
-	// Route::post('/user-profile', [InfoUserController::class, 'store']);
-	
 });
 
 
-
-Route::group(['middleware' => 'guest'], function () {
-    Route::get('/register', [UserController::class, 'register']);
-    Route::post('/register', [UserController::class, 'registering']);
-    Route::get('/login', [UserController::class, 'login'])->name('login');
-    Route::post('/session', [UserController::class, 'signing']);
-
-	// Route::get('/login/forgot-password', [ResetController::class, 'create']);
-	// Route::post('/forgot-password', [ResetController::class, 'sendEmail']);
-	// Route::get('/reset-password/{token}', [ResetController::class, 'resetPass'])->name('password.reset');
-	// Route::post('/reset-password', [ChangePasswordController::class, 'changePassword'])->name('password.update');
-});
