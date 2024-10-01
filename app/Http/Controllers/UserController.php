@@ -76,7 +76,7 @@ class UserController extends Controller
             session()->regenerate();
             return redirect('dashboard')->with(['success'=>'You are logged in.']);
         } else{
-            Auth::logout();
+            Auth::logout(); 
             return back()->with('error', 'Invalid credentials.');
         }
     }
